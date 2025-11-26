@@ -1,26 +1,13 @@
-terraform {
-  required_providers {
-    docker = {
-      source  = "kreuzwerker/docker"
-      version = "3.0.2"
-    }
-  }
+provider "aws" {
+  region = var.aws_region
 }
 
-provider "docker" {
-  host = "npipe:////./pipe/docker_engine"  # Docker daemon connection on Windows
-}
+resource "aws_instance" "demo_ec2" {
+  ami           = var.ami_id
+  instance_type = var.instance_type
+  key_name      = var.key_name
 
-resource "docker_image" "web-image" {
-  name = "nginx:latest"
-}
-
-resource "docker_container" "test-container" {
-  image = docker_image.nginx.name
-  name  = "my-nginx-container"
-
-  ports {
-    internal = 80
-    external = 8080
+  tags = {
+    Name = "Terraform-ArgoCD-EC2"
   }
 }
